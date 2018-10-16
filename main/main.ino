@@ -1,7 +1,15 @@
-#include "Enes100.h"
+#include "Enes100Simulation.h"
+#include "DFRTankSimulation.h"
+
+//#include "Enes100.h"
+//Enes100 enes("Ironsight", DEBRIS, 3, 8, 9);
+
+Enes100Simulation enes;
 
 int dest_x;
 int dest_y;
+int my_x;
+int my_y;
 
 void setup() {
   while (!enes.retrieveDestination()) {
@@ -12,15 +20,16 @@ void setup() {
 }
 
 void loop() {
-  int my_x;
-  int my_y;
   float my_theta;
+  
   // Update OSV location
-  if (enes.updateLocation()) {
-    my_x = enes.location.x;
-    my_y = enes.location.y;
-    my_theta = enes.location.theta;
-  } else {
-    enes.println("Error: Couldn't update location")
+  while(!enes.updateLocation()) {
+    enes.println("Error: Could not update location");
   }
+  my_x = enes.location.x;
+  my_y = enes.location.y;
+  my_theta = enes.location.theta;
+
+  
+  
 }
