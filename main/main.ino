@@ -61,10 +61,15 @@ void turnRight(float time) {
 
 void loop() {
   updateOSVLocation();
+  enes.print("My x: ");
   enes.println(my_x);
+  enes.print("My y: ");
   enes.println(my_y);
+  enes.print("My theta: ");
   enes.println(my_theta);
+  enes.print("Dest x: ");
   enes.println(dest_x);
+  enes.print("Dest y: ");
   enes.println(dest_y);
   exit(0);
 }
