@@ -7,10 +7,10 @@
 Enes100Simulation enes;
 DFRTankSimulation tank;
 
-int dest_x;
-int dest_y;
-int my_x;
-int my_y;
+float dest_x;
+float dest_y;
+float my_x;
+float my_y;
 float my_theta;
 
 void setup() {
@@ -31,29 +31,40 @@ void updateOSVLocation() {
   my_theta = enes.location.theta;
 }
 
-void moveForward() {
+void moveForward(int time) {
   tank.setLeftMotorPWM(255);
   tank.setRightMotorPWM(255);
+  delay(time);
+  tank.turnOffMotors();
 }
 
-void moveBackward() {
+void moveBackward(float time) {
   tank.setLeftMotorPWM(-255);
   tank.setRightMotorPWM(-255);
+  delay(time);
+  tank.turnOffMotors();
 }
 
-void turnLeft() {
-  tank.setLeftMotorPWM(-100);
-  tank.setRightMotorPWM(100);
+void turnLeft(float time) {
+  tank.setLeftMotorPWM(-255);
+  tank.setRightMotorPWM(255);
+  delay(time);
+  tank.turnOffMotors();
 }
 
-void turnRight() {
-  tank.setLeftMotorPWM(100);
-  tank.setRightMotorPWM(-100);
+void turnRight(float time) {
+  tank.setLeftMotorPWM(255);
+  tank.setRightMotorPWM(-255);
+  delay(time);
+  tank.turnOffMotors();
 }
 
 void loop() {
-
-  //updateOSVLocation();
-  moveForward();
-
+  updateOSVLocation();
+  enes.println(my_x);
+  enes.println(my_y);
+  enes.println(my_theta);
+  enes.println(dest_x);
+  enes.println(dest_y);
+  exit(0);
 }
