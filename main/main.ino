@@ -41,6 +41,16 @@ void moveBackward() {
   tank.setRightMotorPWM(-255);
 }
 
+void turnLeft() {
+  tank.setLeftMotorPWM(-100);
+  tank.setRightMotorPWM(100);
+}
+
+void turnRight() {
+  tank.setLeftMotorPWM(100);
+  tank.setRightMotorPWM(-100);
+}
+
 void loop() {
 
   //updateOSVLocation();
