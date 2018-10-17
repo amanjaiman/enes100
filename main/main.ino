@@ -14,6 +14,7 @@ int my_y;
 float my_theta;
 
 void setup() {
+  tank.init();
   while (!enes.retrieveDestination()) {
     enes.println("Unable to retrieve location");
   }
