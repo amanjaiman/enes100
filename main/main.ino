@@ -1,5 +1,8 @@
+// https://playground.arduino.cc/Code/PIDLibraryAdaptiveTuningsExample
+
 #include "Enes100Simulation.h"
 #include "DFRTankSimulation.h"
+#include "PID_v1.h"
 
 //#include "Enes100.h"
 //Enes100 enes("Ironsight", DEBRIS, 3, 8, 9);
@@ -31,28 +34,28 @@ void updateOSVLocation() {
   my_theta = enes.location.theta;
 }
 
-void moveForward(int time) {
+void moveForward(double time) {
   tank.setLeftMotorPWM(255);
   tank.setRightMotorPWM(255);
   delay(time);
   tank.turnOffMotors();
 }
 
-void moveBackward(float time) {
+void moveBackward(double time) {
   tank.setLeftMotorPWM(-255);
   tank.setRightMotorPWM(-255);
   delay(time);
   tank.turnOffMotors();
 }
 
-void turnLeft(float time) {
+void turnLeft(double time) {
   tank.setLeftMotorPWM(-255);
   tank.setRightMotorPWM(255);
   delay(time);
   tank.turnOffMotors();
 }
 
-void turnRight(float time) {
+void turnRight(double time) {
   tank.setLeftMotorPWM(255);
   tank.setRightMotorPWM(-255);
   delay(time);
@@ -71,7 +74,7 @@ void loop() {
     missionAngle = -1*missionAngle;
   }
   
-  while (my_theta > missionAngle+.05 or my_theta < missionAngle-0.05) {
+  while (my_theta > missionAngle+0.05 or my_theta < missionAngle-0.05) {
     turnLeft(50);
     updateOSVLocation();
   }
