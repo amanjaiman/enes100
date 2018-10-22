@@ -7,11 +7,11 @@
 Enes100Simulation enes;
 DFRTankSimulation tank;
 
-float dest_x;
-float dest_y;
-float my_x;
-float my_y;
-float my_theta;
+double dest_x;
+double dest_y;
+double my_x;
+double my_y;
+double my_theta;
 
 void setup() {
   tank.init();
@@ -59,17 +59,23 @@ void turnRight(float time) {
   tank.turnOffMotors();
 }
 
+double getOriginAngleToMission() {
+  return atan(abs(my_y-dest_y)/abs(my_x-dest_x));
+}
+
 void loop() {
   updateOSVLocation();
-  enes.print("My x: ");
-  enes.println(my_x);
-  enes.print("My y: ");
-  enes.println(my_y);
-  enes.print("My theta: ");
-  enes.println(my_theta);
-  enes.print("Dest x: ");
-  enes.println(dest_x);
-  enes.print("Dest y: ");
-  enes.println(dest_y);
+
+  double missionAngle = getOriginAngleToMission();
+  if (my_y > dest_y) {
+    missionAngle = -1*missionAngle;
+  }
+  
+  while (my_theta > missionAngle+.05 or my_theta < missionAngle-0.05) {
+    turnLeft(50);
+    updateOSVLocation();
+  }
+  
+  enes.println("Stopped...");
   exit(0);
 }
