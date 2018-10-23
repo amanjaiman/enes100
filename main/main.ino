@@ -43,18 +43,14 @@ void moveBackward() {
   tank.setRightMotorPWM(-255);
 }
 
-void turnLeft(double time) {
+void turnLeft() {
   tank.setLeftMotorPWM(-255);
   tank.setRightMotorPWM(255);
-  delay(time);
-  tank.turnOffMotors();
 }
 
-void turnRight(double time) {
+void turnRight() {
   tank.setLeftMotorPWM(255);
   tank.setRightMotorPWM(-255);
-  delay(time);
-  tank.turnOffMotors();
 }
 
 double getOriginAngleToMission() {
