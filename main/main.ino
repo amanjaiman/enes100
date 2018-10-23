@@ -61,6 +61,11 @@ double getOriginAngleToMission() {
   return atan(abs(my_y-dest_y)/abs(my_x-dest_x));
 }
 
+void avoidObstacles() {
+  updateOSVLocation();
+  
+}
+
 void loop() {
   updateOSVLocation();
 
@@ -77,6 +82,11 @@ void loop() {
   moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
+    if (enes.readDistanceSensor(1) < .3) {
+      tank.turnOffMotors();
+      avoidObstacles();
+      moveForward();
+    }
   }
   tank.turnOffMotors();
   
