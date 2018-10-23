@@ -65,7 +65,7 @@ void avoidObstacles() {
 void loop() {
   updateOSVLocation();
 
-  double missionAngle = getOriginAngleToMission();
+  /*double missionAngle = getOriginAngleToMission();
   if (my_y > dest_y) {
     missionAngle = -1*missionAngle;
   }
@@ -73,6 +73,7 @@ void loop() {
   while (my_theta > missionAngle+0.05 or my_theta < missionAngle-0.05) {
     turnLeft(50);
     updateOSVLocation();
+  }*/
   }
   
   moveForward();
@@ -85,6 +86,7 @@ void loop() {
     }
   }
   tank.turnOffMotors();
+  }
   
   enes.println("Stopped...");
   exit(0);
