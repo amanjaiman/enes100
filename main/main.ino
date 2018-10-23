@@ -33,11 +33,9 @@ void updateOSVLocation() {
   my_theta = enes.location.theta;
 }
 
-void moveForward(double time) {
+void moveForward() {
   tank.setLeftMotorPWM(255);
   tank.setRightMotorPWM(255);
-  delay(time);
-  tank.turnOffMotors();
 }
 
 void moveBackward(double time) {
@@ -77,6 +75,12 @@ void loop() {
     turnLeft(50);
     updateOSVLocation();
   }
+  bool s = true;
+  moveForward();
+  while (my_x < dest_x) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
   
   enes.println("Stopped...");
   exit(0);
