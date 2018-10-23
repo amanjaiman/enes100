@@ -95,7 +95,28 @@ void loop() {
 
   if (my_y > dest_y) {
     turnRight();
+    while (my_theta > -1.57) {
+      updateOSVLocation();
+    }
   }
+  else {
+    turnLeft();
+    while (my_theta < 1.57) {
+      updateOSVLocation();
+    }
+  }
+  turnOffMotors();
+
+  moveForward();
+  while (abs(my_y-dest_y) > 0.05) {
+    updateOSVLocation();
+    if (enes.readDistanceSensor(1) < .3) {
+      tank.turnOffMotors();
+      avoidObstacles();
+      moveForward();
+    }
+  }
+  tank.turnOffMotors();
   
   enes.println("Stopped...");
   exit(0);
