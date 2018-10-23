@@ -38,11 +38,9 @@ void moveForward() {
   tank.setRightMotorPWM(255);
 }
 
-void moveBackward(double time) {
+void moveBackward() {
   tank.setLeftMotorPWM(-255);
   tank.setRightMotorPWM(-255);
-  delay(time);
-  tank.turnOffMotors();
 }
 
 void turnLeft(double time) {
@@ -75,7 +73,7 @@ void loop() {
     turnLeft(50);
     updateOSVLocation();
   }
-  bool s = true;
+  
   moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
