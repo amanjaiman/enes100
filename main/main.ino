@@ -57,6 +57,112 @@ double getOriginAngleToMission() {
   return atan(abs(my_y-dest_y)/abs(my_x-dest_x));
 }
 
+void avoidXObstacle() {
+  updateOSVLocation();
+  int turn_direction = 0; // 0 for left, 1 for right
+  if (enes.readDistanceSensor(4) < .5) {
+    turnLeft();
+  }
+  else {
+    if (enes.readDistanceSensor(10) < .5) {
+      turnRight();
+      turn_direction = 1;
+    }
+    else {
+      if (my_y < dest_y) {
+        turnLeft();
+      }
+      else {
+        turnRight();
+        turn_direction = 1;
+      }
+    }
+  }
+  if (turn_direction == 0) {
+    while (my_theta < 1.57) {
+      updateOSVLocation();
+    }
+  }
+  else {
+    while (my_theta > -1.57) {
+      updateOSVLocation();
+    }
+  }
+
+  moveForward();
+  if (turn_direction == 0) {
+    while (enes.readDistanceSensor(4) < .5) {}
+  }
+  else {
+    while (enes.readDistanceSensor(10) < .5) {}
+  }
+  delay(300);
+  tank.turnOffMotors();
+  updateOSVLocation();
+
+  if (turn_direction == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  while (my_theta < 0.05 and my_theta > -0.05) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
+  updateOSVLocation();
+
+  moveForward();
+  if (turn_direction == 0) {
+    while (enes.readDistanceSensor(4) < .5) {}
+  }
+  else {
+    while (enes.readDistanceSensor(10) < .5) {}
+  }
+  delay(300);
+  tank.turnOffMotors();
+  updateOSVLocation();
+  
+  if (turn_direction == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  if (turn_direction == 0) {
+    while (my_theta < 1.57) {
+      updateOSVLocation();
+    }
+  }
+  else {
+    while (my_theta > -1.57) {
+      updateOSVLocation();
+    }
+  }
+  tank.turnOffMotors();
+  updateOSVLocation();
+
+  moveForward();
+  if (turn_direction == 0) {
+    while (enes.readDistanceSensor(4) < .5) {}
+  }
+  else {
+    while (enes.readDistanceSensor(10) < .5) {}
+  }
+  delay(300);
+  tank.turnOffMotors();
+  updateOSVLocation();
+
+  if (turn_direction == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  while (my_theta < 0.05 and my_theta > -0.05) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
   updateOSVLocation();
   
 }
@@ -90,7 +196,7 @@ void loop() {
     updateOSVLocation();
     if (enes.readDistanceSensor(1) < .3) {
       tank.turnOffMotors();
-      avoidYObstacle();
+      avoidXObstacle();
       moveForward();
     }
   }
@@ -116,7 +222,7 @@ void loop() {
     updateOSVLocation();
     if (enes.readDistanceSensor(1) < .3) {
       tank.turnOffMotors();
-      avoidXObstacle();
+      avoidYObstacle();
       moveForward();
     }
   }
