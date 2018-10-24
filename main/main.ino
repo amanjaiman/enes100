@@ -56,7 +56,7 @@ void turnRight() {
 
 void avoidXObstacle() {
   updateOSVLocation();
-  while (my_theta > 1.62 or my_theta < 1.52) {
+  while (my_theta > 1.60 or my_theta < 1.54) {
     updateOSVLocation();
     turnLeft();
   }
