@@ -19,6 +19,7 @@ void setup() {
   tank.init();
   while (!enes.retrieveDestination()) {
     enes.println("Unable to retrieve location");
+    delay(300);
   }
   dest_x = enes.destination.x;
   dest_y = enes.destination.y;
@@ -69,6 +70,12 @@ void avoidYObstacle() {
 
 void loop() {
   updateOSVLocation();
+  enes.print("X: ");
+  enes.println(my_x);
+  enes.print("Y: ");
+  enes.println(my_y);
+  enes.print("Theta: ");
+  enes.println(my_theta);
 
   while (my_theta > 0.05 or my_theta < -0.05) {
     updateOSVLocation();
