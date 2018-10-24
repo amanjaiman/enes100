@@ -86,7 +86,7 @@ void loop() {
   moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(1) < .3) {
+    if (enes.readDistanceSensor(1) < .175 or enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
       tank.turnOffMotors();
       avoidXObstacle();
       moveForward();
@@ -112,7 +112,7 @@ void loop() {
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(1) < .3) {
+    if (enes.readDistanceSensor(1) < .175 or enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
       tank.turnOffMotors();
       avoidYObstacle();
       moveForward();
