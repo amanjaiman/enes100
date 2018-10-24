@@ -70,19 +70,9 @@ void avoidYObstacle() {
 void loop() {
   updateOSVLocation();
 
-  /*double missionAngle = getOriginAngleToMission();
-  if (my_y > dest_y) {
-    missionAngle = -1*missionAngle;
-  }
-  
-  while (my_theta > missionAngle+0.05 or my_theta < missionAngle-0.05) {
-    turnLeft(50);
-    updateOSVLocation();
-  }*/
-
-  turnLeft();
   while (my_theta > 0.05 or my_theta < -0.05) {
     updateOSVLocation();
+    turnLeft();
   }
   tank.turnOffMotors();
   
@@ -110,7 +100,7 @@ void loop() {
       updateOSVLocation();
     }
   }
-  turnOffMotors();
+  tank.turnOffMotors();
 
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
