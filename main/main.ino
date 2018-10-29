@@ -54,17 +54,126 @@ void turnRight() {
   tank.setRightMotorPWM(-255);
 }
 
-void avoidXObstacle() {
+int turnX() { // 0 for left, 1 for right
+  // Find out which way to move:
+  if (enes.readDistanceSensor(9) < .3) { // Cannot move forward because to close to top
+    return 1;
+  }
+  else {
+    if (my_y > dest_y) {
+      if (enes.readDistanceSensor(5) < .3) { // Cannot move backwards because to close to bottom
+        return 0;
+      }
+      else {
+        return 1;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+}
+
+int turnY() { // 0 for left, 1 for right
+  // Find out which way to move:
+  if (enes.readDistanceSensor(9) < .3) { // Cannot move forward because to close to left
+    return 1;
+  }
+  else {
+    if (my_y > dest_y) {
+      if (enes.readDistanceSensor(5) < .3) { // Cannot move backwards because to close to right
+        return 0;
+      }
+      else {
+        return 1;
+      }
+    }
+    else {
+      return 0;
+    }
+  }
+}
+
+void avoidXObstacle() { // WHAT IF OBSTACLE IS RIGHT ABOVE/BELOW MISSION SITE
   updateOSVLocation();
-  while (my_theta > 1.60 or my_theta < 1.54) {
-    updateOSVLocation();
-    turnLeft();
+  delay(500);
+  int turnDirection = turnX();
+  int sensor = 0;
+  if (turnDirection == 0) {
+    sensor = 5;
+    while (my_theta < 1.53 or my_theta > 1.61) {
+      updateOSVLocation();
+      turnLeft();
+    }
+  }
+  else {
+    sensor = 9;
+    while (my_theta > -1.53 or my_theta < -1.61) {
+      updateOSVLocation();
+      turnRight();
+    }
   }
   tank.turnOffMotors();
+
+  // Clear obstacle side
+  moveForward();
+  while (enes.readDistanceSensor(sensor) < .5) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
+
+  if (turnDirection == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  while (my_theta > 0.05 or my_theta < -0.05) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
+  
 }
 
 void avoidYObstacle() {
   updateOSVLocation();
+  delay(500);
+  int turnDirection = turnY();
+  int sensor = 0;
+  if (turnDirection == 0) {
+    sensor = 5;
+    while (my_theta < 1.53 or my_theta > 1.61) {
+      updateOSVLocation();
+      turnLeft();
+    }
+  }
+  else {
+    sensor = 9;
+    while (my_theta > -1.53 or my_theta < -1.61) {
+      updateOSVLocation();
+      turnRight();
+    }
+  }
+  tank.turnOffMotors();
+
+  // Clear obstacle side
+  moveForward();
+  while (enes.readDistanceSensor(sensor) < .5) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
+
+  if (turnDirection == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  while (my_theta > 0.05 or my_theta < -0.05) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
+  
   
 }
 
@@ -86,7 +195,7 @@ void loop() {
   moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(1) < .175 or enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
       tank.turnOffMotors();
       avoidXObstacle();
       moveForward();
@@ -109,17 +218,25 @@ void loop() {
   }
   tank.turnOffMotors();
 
+  updateOSVLocation();
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(1) < .175 or enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
       tank.turnOffMotors();
       avoidYObstacle();
       moveForward();
     }
   }
   tank.turnOffMotors();
+
+  if (my_x > dest_x) {
+    
+  }
+  else if (my_x < dest_x) {
+    
+  }
   
-  enes.println("Stopped...");
+  enes.println("Reached...");
   exit(0);
 }
