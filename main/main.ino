@@ -120,7 +120,45 @@ void avoidXObstacle() { // WHAT IF OBSTACLE IS RIGHT ABOVE/BELOW MISSION SITE
 
 void avoidYObstacle() {
   updateOSVLocation();
-  
+  delay(500);
+  int turnDirection = turn();
+  int sensor = 0;
+  if (turnDirection == 0) {
+    sensor = 4;
+    while (my_theta < 3.1 or my_theta > -3.1) {
+      updateOSVLocation();
+      turnLeft();
+    }
+  }
+  else {
+    sensor = 10;
+    while (my_theta > 0.05 or my_theta < -0.05) {
+      updateOSVLocation();
+      turnRight();
+    }
+  }
+  tank.turnOffMotors();
+
+  // Clear obstacle side
+  moveForward();
+  enes.println(sensor);
+  while (enes.readDistanceSensor(sensor) < 0.5) {
+    enes.println("Clearing obstacle...");
+    updateOSVLocation();
+  }
+  delay(1000);
+  tank.turnOffMotors();
+
+  if (turnDirection == 0) {
+    turnRight();
+  }
+  else {
+    turnLeft();
+  }
+  while (my_theta > 1.6 or my_theta < 1.53) {
+    updateOSVLocation();
+  }
+  tank.turnOffMotors();
 }
 
 void loop() {
