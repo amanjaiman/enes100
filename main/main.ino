@@ -213,6 +213,28 @@ void loop() {
     }
   }
   tank.turnOffMotors();
+  updateOSVLocation();
+
+  /*if(my_x > dest_x) {
+    while (my_theta < 3.1 or my_theta > -3.1) {
+      updateOSVLocation();
+      turnLeft();
+    }
+    moveForward();
+    while (my_x > dest_x) {
+      updateOSVLocation();
+    }
+  }
+  else if (my_x < dest_x) {
+    while (my_theta > 0.05 or my_theta < -0.05) {
+      updateOSVLocation();
+      turnRight();
+    }
+    moveForward();
+    while (my_x < dest_x) {
+      updateOSVLocation();
+    }
+  }*/
   
   enes.println("Reached...");
   exit(0);
