@@ -226,6 +226,7 @@ void loop() {
   while (my_theta > 0.04 or my_theta < -0.04) {
     updateOSVLocation();
   }
+  tank.turnOffMotors();
   if (my_x > dest_x) {
     moveBackward();
     while (my_x > dest_x) {
@@ -238,6 +239,7 @@ void loop() {
       updateOSVLocation();
     }
   }
+  tank.turnOffMotors();
   
   enes.println("Reached Destination!");
   exit(0);
