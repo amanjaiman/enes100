@@ -100,8 +100,13 @@ void avoidXObstacle() { // WHAT IF OBSTACLE IS RIGHT ABOVE/BELOW MISSION SITE
   enes.println(sensor);
   while (enes.readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
+    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+      tank.turnOffMotors();
+      avoidYObstacle();
+      moveForward();
+    }
   }
-  delay(1000);
+  delay(750);
   tank.turnOffMotors();
 
   if (turnDirection == 0) {
@@ -143,8 +148,13 @@ void avoidYObstacle() {
   enes.println(sensor);
   while (enes.readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
+    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+      tank.turnOffMotors();
+      avoidXObstacle();
+      moveForward();
+    }
   }
-  delay(1000);
+  delay(750);
   tank.turnOffMotors();
 
   if (turnDirection == 0) {
