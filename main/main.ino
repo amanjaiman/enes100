@@ -99,7 +99,6 @@ void avoidXObstacle() { // WHAT IF OBSTACLE IS RIGHT ABOVE/BELOW MISSION SITE
   moveForward();
   enes.println(sensor);
   while (enes.readDistanceSensor(sensor) < 0.5) {
-    enes.println("Clearing obstacle...");
     updateOSVLocation();
   }
   delay(1000);
@@ -143,7 +142,6 @@ void avoidYObstacle() {
   moveForward();
   enes.println(sensor);
   while (enes.readDistanceSensor(sensor) < 0.5) {
-    enes.println("Clearing obstacle...");
     updateOSVLocation();
   }
   delay(1000);
@@ -170,7 +168,7 @@ void loop() {
   enes.print("Theta: ");
   enes.println(my_theta);
 
-  while (my_theta > 0.05 or my_theta < -0.05) {
+  while (my_theta > 0.04 or my_theta < -0.04) {
     updateOSVLocation();
     turnLeft();
   }
@@ -190,17 +188,19 @@ void loop() {
 
   if (my_y > dest_y) {
     turnRight();
-    while (my_theta > -1.57) {
+    while (my_theta > -1.56) {
       updateOSVLocation();
     }
   }
   else {
     turnLeft();
-    while (my_theta < 1.57) {
+    while (my_theta < 1.56) {
       updateOSVLocation();
     }
   }
   tank.turnOffMotors();
+
+  enes.println("Reached X");
 
   updateOSVLocation();
   moveForward();
@@ -215,27 +215,30 @@ void loop() {
   tank.turnOffMotors();
   updateOSVLocation();
 
-  /*if(my_x > dest_x) {
-    while (my_theta < 3.1 or my_theta > -3.1) {
-      updateOSVLocation();
-      turnLeft();
-    }
-    moveForward();
+  enes.println("Reached Y");
+
+  if (my_theta < 0) {
+    turnLeft();
+  }
+  else {
+    turnRight();
+  }
+  while (my_theta > 0.04 or my_theta < -0.04) {
+    updateOSVLocation();
+  }
+  if (my_x > dest_x) {
+    moveBackward();
     while (my_x > dest_x) {
       updateOSVLocation();
     }
   }
   else if (my_x < dest_x) {
-    while (my_theta > 0.05 or my_theta < -0.05) {
-      updateOSVLocation();
-      turnRight();
-    }
     moveForward();
     while (my_x < dest_x) {
       updateOSVLocation();
     }
-  }*/
+  }
   
-  enes.println("Reached...");
+  enes.println("Reached Destination!");
   exit(0);
 }
