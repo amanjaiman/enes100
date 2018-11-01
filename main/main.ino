@@ -74,7 +74,7 @@ int turn() { // 0 for left, 1 for right
   }
 }
 
-void avoidXObstacle() { // WHAT IF OBSTACLE IS RIGHT ABOVE/BELOW MISSION SITE
+void avoidXObstacle() {
   updateOSVLocation();
   delay(500);
   int turnDirection = turn();
