@@ -131,12 +131,12 @@ int readDistanceSensor(int sensor)(){
 
 /*int turn() { // 0 for left, 1 for right
   // Find out which way to move:
-  if (enes.readDistanceSensor(10) < .3) { // Cannot move forward because to close to top
+  if (readDistanceSensor(10) < .3) { // Cannot move forward because to close to top
     return 1;
   }
   else {
     if (my_y > dest_y) {
-      if (enes.readDistanceSensor(4) < .3) { // Cannot move backwards because to close to bottom
+      if (readDistanceSensor(4) < .3) { // Cannot move backwards because to close to bottom
         return 0;
       }
       else {
@@ -173,9 +173,9 @@ void avoidXObstacle() {
   // Clear obstacle side
   moveForward();
   enes.println(sensor);
-  while (enes.readDistanceSensor(sensor) < 0.5) {
+  while (readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidYObstacle();
       moveForward();
@@ -221,9 +221,9 @@ void avoidYObstacle() {
   // Clear obstacle side
   moveForward();
   enes.println(sensor);
-  while (enes.readDistanceSensor(sensor) < 0.5) {
+  while (readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidXObstacle();
       moveForward();
@@ -262,7 +262,7 @@ void loop() {
   /*moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidXObstacle();
       moveForward();
@@ -291,7 +291,7 @@ void loop() {
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidYObstacle();
       moveForward();
