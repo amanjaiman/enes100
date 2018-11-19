@@ -1,28 +1,51 @@
-// https://playground.arduino.cc/Code/PIDLibraryAdaptiveTuningsExample
+#include <Tlc5940.h>
+#include "Enes100.h"
+Enes100 enes("Ironsight", DEBRIS, 3, 12, 11);
 
-#include "Enes100Simulation.h"
-#include "DFRTankSimulation.h"
+int leftMotor1 = 7;
+int leftMotor2 = 8;
+int rightMotor1 = 9;
+int rightMotor2 = 10;
 
-//#include "Enes100.h"
-//Enes100 enes("Ironsight", DEBRIS, 3, 8, 9);
+//int slideRailMotor = ;
 
-Enes100Simulation enes;
-DFRTankSimulation tank;
+int sensor1trig = 1;
+int sensor1echo = 0;
+int sensor2trig = 2;
+int sensor2echo = 0;
+int sensor3trig = 3;
+int sensor3echo = 0;
+int sensor4trig = 4;
+int sensor4echo = 0;
 
-double dest_x;
-double dest_y;
-double my_x;
-double my_y;
-double my_theta;
+float dest_x;
+float dest_y;
+float my_x;
+float my_y;
+float my_theta;
 
 void setup() {
-  tank.init();
   while (!enes.retrieveDestination()) {
     enes.println("Unable to retrieve location");
     delay(300);
   }
   dest_x = enes.destination.x;
   dest_y = enes.destination.y;
+
+  Tlc.init();
+  /*pinMode(leftMotor1, OUTPUT);
+  pinMode(leftMotor2, OUTPUT);
+  pinMode(rightMotor1, OUTPUT);
+  pinMode(rightMotor2, OUTPUT);*/
+  
+  pinMode(sensor1trig, OUTPUT);
+  pinMode(sensor1echo, INPUT);
+  pinMode(sensor2trig, OUTPUT);
+  pinMode(sensor2echo, INPUT);
+  pinMode(sensor3trig, OUTPUT);
+  pinMode(sensor3echo, INPUT);
+  pinMode(sensor4trig, OUTPUT);
+  pinMode(sensor4echo, INPUT);
 }
 
 void updateOSVLocation() {
@@ -35,33 +58,96 @@ void updateOSVLocation() {
 }
 
 void moveForward() {
-  tank.setLeftMotorPWM(255);
-  tank.setRightMotorPWM(255);
+  Tlc.set(leftMotor1, 4095);
+  Tlc.set(leftMotor2, 0);
+  Tlc.set(rightMotor1, 4095);
+  Tlc.set(rightMotor2, 0);
 }
 
 void moveBackward() {
-  tank.setLeftMotorPWM(-255);
-  tank.setRightMotorPWM(-255);
+  Tlc.set(leftMotor2, 4095);
+  Tlc.set(leftMotor1, 0);
+  Tlc.set(rightMotor2, 4095);
+  Tlc.set(rightMotor1, 0);
 }
 
 void turnLeft() {
-  tank.setLeftMotorPWM(-255);
-  tank.setRightMotorPWM(255);
+  Tlc.set(leftMotor1, 4095);
+  Tlc.set(leftMotor2, 0);
+  Tlc.set(rightMotor2, 4095);
+  Tlc.set(rightMotor1, 0);
 }
 
 void turnRight() {
-  tank.setLeftMotorPWM(255);
-  tank.setRightMotorPWM(-255);
+  Tlc.set(leftMotor2, 4095);
+  Tlc.set(leftMotor1, 0);
+  Tlc.set(rightMotor1, 4095);
+  Tlc.set(rightMotor2, 0);
+}
+
+void stopAllMotors() {
+  Tlc.set(leftMotor2, 0);
+  Tlc.set(leftMotor1, 0);
+  Tlc.set(rightMotor1, 0);
+  Tlc.set(rightMotor2, 0);
+}
+
+void moveSlideRailForward() {
+  
+}
+
+void moveSlideRailBackward() {
+  
+}
+
+//For these two methods replace with the actual pin values
+int getTrigPin(int sensor){
+  if(sensor ==1){
+    return sensor1trig;
+  }else if(sensor ==2){
+    return sensor2trig;
+  }else if(sensor ==3){
+    return sensor3trig;
+  }else{
+    return sensor4trig;
+  }
+}
+
+int getEchoPin(int sensor){
+  if(sensor ==1){
+    return sensor1echo;
+  }else if(sensor ==2){
+    return sensor2echo;
+  }else if(sensor ==3){
+    return sensor3echo;
+  }else{
+    return sensor4echo;
+  }
+}
+
+int readDistanceSensor(int sensor){
+  long duration;
+  digitalWrite(getTrigPin(sensor), LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(getTrigPin(sensor), HIGH);
+  delayMicroseconds(10);
+  digitalWrite(getTrigPin(sensor), LOW);
+
+  duration = pulseIn(getEchoPin(sensor), HIGH);
+  int distance= duration*0.034/2;
+
+  return distance;
 }
 
 int turn() { // 0 for left, 1 for right
   // Find out which way to move:
-  if (enes.readDistanceSensor(10) < .3) { // Cannot move forward because to close to top
+  if (readDistanceSensor(10) < .3) { // Cannot move forward because to close to top
     return 1;
   }
   else {
     if (my_y > dest_y) {
-      if (enes.readDistanceSensor(4) < .3) { // Cannot move backwards because to close to bottom
+      if (readDistanceSensor(4) < .3) { // Cannot move backwards because to close to bottom
         return 0;
       }
       else {
@@ -93,21 +179,21 @@ void avoidXObstacle() {
       turnRight();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
 
   // Clear obstacle side
   moveForward();
   enes.println(sensor);
-  while (enes.readDistanceSensor(sensor) < 0.5) {
+  while (readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
-      tank.turnOffMotors();
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+      stopAllMotors();
       avoidYObstacle();
       moveForward();
     }
   }
   delay(750);
-  tank.turnOffMotors();
+  stopAllMotors();
 
   if (turnDirection == 0) {
     turnRight();
@@ -118,7 +204,7 @@ void avoidXObstacle() {
   while (my_theta > 0.05 or my_theta < -0.05) {
     updateOSVLocation();
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   
 }
 
@@ -141,21 +227,21 @@ void avoidYObstacle() {
       turnRight();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
 
   // Clear obstacle side
   moveForward();
   enes.println(sensor);
-  while (enes.readDistanceSensor(sensor) < 0.5) {
+  while (readDistanceSensor(sensor) < 0.5) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
-      tank.turnOffMotors();
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+      stopAllMotors();
       avoidXObstacle();
       moveForward();
     }
   }
   delay(750);
-  tank.turnOffMotors();
+  stopAllMotors();
 
   if (turnDirection == 0) {
     turnRight();
@@ -166,7 +252,7 @@ void avoidYObstacle() {
   while (my_theta > 1.6 or my_theta < 1.53) {
     updateOSVLocation();
   }
-  tank.turnOffMotors();
+  stopAllMotors();
 }
 
 void loop() {
@@ -182,18 +268,18 @@ void loop() {
     updateOSVLocation();
     turnLeft();
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   
-  moveForward();
+  /*moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
-      tank.turnOffMotors();
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+      stopAllMotors();
       avoidXObstacle();
       moveForward();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   updateOSVLocation();
 
   if (my_y > dest_y) {
@@ -208,7 +294,7 @@ void loop() {
       updateOSVLocation();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
 
   enes.println("Reached X");
 
@@ -216,13 +302,13 @@ void loop() {
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
     updateOSVLocation();
-    if (enes.readDistanceSensor(0) < .175 or enes.readDistanceSensor(2) < .175) {
-      tank.turnOffMotors();
+    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+      stopAllMotors();
       avoidYObstacle();
       moveForward();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   updateOSVLocation();
 
   enes.println("Reached Y");
@@ -236,7 +322,7 @@ void loop() {
   while (my_theta > 0.04 or my_theta < -0.04) {
     updateOSVLocation();
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   if (my_x > dest_x) {
     moveBackward();
     while (my_x > dest_x) {
@@ -249,8 +335,8 @@ void loop() {
       updateOSVLocation();
     }
   }
-  tank.turnOffMotors();
+  stopAllMotors();
   
-  enes.println("Reached Destination!");
+  enes.navigated();*/
   exit(0);
 }
