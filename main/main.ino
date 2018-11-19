@@ -7,16 +7,17 @@ int leftMotor2 = 8;
 int rightMotor1 = 9;
 int rightMotor2 = 10;
 
-//int slideRailMotor = ;
+int slideRailMotor1 = 11;
+int slideRailMotor2 = 12;
 
 int sensor1trig = 1;
-int sensor1echo = 0;
+int sensor1echo = 5;
 int sensor2trig = 2;
-int sensor2echo = 0;
+int sensor2echo = 6;
 int sensor3trig = 3;
-int sensor3echo = 0;
+int sensor3echo = 7;
 int sensor4trig = 4;
-int sensor4echo = 0;
+int sensor4echo = 8;
 
 float dest_x;
 float dest_y;
@@ -39,7 +40,7 @@ void setup() {
   pinMode(rightMotor2, OUTPUT);*/
   
   pinMode(sensor1trig, OUTPUT);
-  pinMode(sensor1echo, INPUT);
+  //pinMode(sensor1echo, INPUT);
   pinMode(sensor2trig, OUTPUT);
   pinMode(sensor2echo, INPUT);
   pinMode(sensor3trig, OUTPUT);
@@ -62,6 +63,7 @@ void moveForward() {
   Tlc.set(leftMotor2, 0);
   Tlc.set(rightMotor1, 4095);
   Tlc.set(rightMotor2, 0);
+  Tlc.update();
 }
 
 void moveBackward() {
@@ -69,6 +71,7 @@ void moveBackward() {
   Tlc.set(leftMotor1, 0);
   Tlc.set(rightMotor2, 4095);
   Tlc.set(rightMotor1, 0);
+  Tlc.update();
 }
 
 void turnLeft() {
@@ -76,6 +79,7 @@ void turnLeft() {
   Tlc.set(leftMotor2, 0);
   Tlc.set(rightMotor2, 4095);
   Tlc.set(rightMotor1, 0);
+  Tlc.update();
 }
 
 void turnRight() {
@@ -83,6 +87,7 @@ void turnRight() {
   Tlc.set(leftMotor1, 0);
   Tlc.set(rightMotor1, 4095);
   Tlc.set(rightMotor2, 0);
+  Tlc.update();
 }
 
 void stopAllMotors() {
@@ -90,14 +95,17 @@ void stopAllMotors() {
   Tlc.set(leftMotor1, 0);
   Tlc.set(rightMotor1, 0);
   Tlc.set(rightMotor2, 0);
+  Tlc.update();
 }
 
 void moveSlideRailForward() {
-  
+  Tlc.set(slideRailMotor1, 4095);
+  Tlc.set(slideRailMotor2, 0);
 }
 
 void moveSlideRailBackward() {
-  
+  Tlc.set(slideRailMotor1, 0);
+  Tlc.set(slideRailMotor2, 4095);
 }
 
 //For these two methods replace with the actual pin values
@@ -127,14 +135,23 @@ int getEchoPin(int sensor){
 
 int readDistanceSensor(int sensor){
   long duration;
-  digitalWrite(getTrigPin(sensor), LOW);
+  Tlc.set(getTrigPin(sensor), 0);
+  Tlc.update();
   delayMicroseconds(2);
   
-  digitalWrite(getTrigPin(sensor), HIGH);
+  Tlc.set(getTrigPin(sensor), 4095);
+  Tlc.update();
   delayMicroseconds(10);
-  digitalWrite(getTrigPin(sensor), LOW);
+  Tlc.set(getTrigPin(sensor), 0);
+  Tlc.update();
 
-  duration = pulseIn(getEchoPin(sensor), HIGH);
+  if (getEchoPin(sensor) == 5) { // 5 is on multiplexer
+    duration = Tlc.get(getEchoPin(sensor));
+    Tlc.update();
+  }
+  else {
+    duration = pulseIn(getEchoPin(sensor), HIGH);
+  }
   int distance= duration*0.034/2;
 
   return distance;
