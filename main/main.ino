@@ -2,22 +2,22 @@
 #include "Enes100.h"
 Enes100 enes("Ironsight", DEBRIS, 3, 12, 11);
 
-int leftMotor1 = 7;
-int leftMotor2 = 8;
-int rightMotor1 = 9;
-int rightMotor2 = 10;
+int leftMotor1 = 10;
+int leftMotor2 = 12;
+int rightMotor1 = 11;
+int rightMotor2 = 13;
 
-int slideRailMotor1 = 11;
-int slideRailMotor2 = 12;
+int slideRailMotor1 = 1;
+int slideRailMotor2 = 9;
 
-int sensor1trig = 1;
-int sensor1echo = 5;
-int sensor2trig = 2;
-int sensor2echo = 6;
+int sensor1trig = 3;
+int sensor1echo = 2; // Front left
+int sensor2trig = 3;
+int sensor2echo = 4; // Front right
 int sensor3trig = 3;
-int sensor3echo = 7;
-int sensor4trig = 4;
-int sensor4echo = 8;
+int sensor3echo = 7; // Right sensor
+int sensor4trig = 3;
+int sensor4echo = 8; // Left sensor
 
 float dest_x;
 float dest_y;
@@ -33,14 +33,14 @@ void setup() {
   dest_x = enes.destination.x;
   dest_y = enes.destination.y;
 
-  Tlc.init();
-  /*pinMode(leftMotor1, OUTPUT);
+  //Tlc.init();
+  pinMode(leftMotor1, OUTPUT);
   pinMode(leftMotor2, OUTPUT);
   pinMode(rightMotor1, OUTPUT);
-  pinMode(rightMotor2, OUTPUT);*/
+  pinMode(rightMotor2, OUTPUT);
   
   pinMode(sensor1trig, OUTPUT);
-  //pinMode(sensor1echo, INPUT);
+  pinMode(sensor1echo, INPUT);
   pinMode(sensor2trig, OUTPUT);
   pinMode(sensor2echo, INPUT);
   pinMode(sensor3trig, OUTPUT);
@@ -59,43 +59,39 @@ void updateOSVLocation() {
 }
 
 void moveForward() {
-  Tlc.set(leftMotor1, 4095);
-  Tlc.set(leftMotor2, 0);
-  Tlc.set(rightMotor1, 4095);
-  Tlc.set(rightMotor2, 0);
+  digitalWrite(leftMotor1, HIGH);
+  digitalWrite(leftMotor2, LOW);
+  digitalWrite(rightMotor1, HIGH);
+  digitalWrite(rightMotor2, LOW);
   Tlc.update();
 }
 
 void moveBackward() {
-  Tlc.set(leftMotor2, 4095);
-  Tlc.set(leftMotor1, 0);
-  Tlc.set(rightMotor2, 4095);
-  Tlc.set(rightMotor1, 0);
-  Tlc.update();
+  digitalWrite(leftMotor2, HIGH);
+  digitalWrite(leftMotor1, LOW);
+  digitalWrite(rightMotor2, HIGH);
+  digitalWrite(rightMotor1, LOW);
 }
 
 void turnLeft() {
-  Tlc.set(leftMotor1, 4095);
-  Tlc.set(leftMotor2, 0);
-  Tlc.set(rightMotor2, 4095);
-  Tlc.set(rightMotor1, 0);
-  Tlc.update();
+  digitalWrite(leftMotor1, HIGH);
+  digitalWrite(leftMotor2, LOW);
+  digitalWrite(rightMotor2, HIGH);
+  digitalWrite(rightMotor1, LOW);
 }
 
 void turnRight() {
-  Tlc.set(leftMotor2, 4095);
-  Tlc.set(leftMotor1, 0);
-  Tlc.set(rightMotor1, 4095);
-  Tlc.set(rightMotor2, 0);
-  Tlc.update();
+  digitalWrite(leftMotor2, HIGH);
+  digitalWrite(leftMotor1, LOW);
+  digitalWrite(rightMotor1, HIGH);
+  digitalWrite(rightMotor2, LOW);
 }
 
 void stopAllMotors() {
-  Tlc.set(leftMotor2, 0);
-  Tlc.set(leftMotor1, 0);
-  Tlc.set(rightMotor1, 0);
-  Tlc.set(rightMotor2, 0);
-  Tlc.update();
+  digitalWrite(leftMotor2, LOW);
+  digitalWrite(leftMotor1, LOW);
+  digitalWrite(rightMotor1, LOW);
+  digitalWrite(rightMotor2, LOW);
 }
 
 void moveSlideRailForward() {
@@ -135,23 +131,14 @@ int getEchoPin(int sensor){
 
 int readDistanceSensor(int sensor){
   long duration;
-  Tlc.set(getTrigPin(sensor), 0);
-  Tlc.update();
+  digitalWrite(getTrigPin(sensor), LOW);
   delayMicroseconds(2);
   
-  Tlc.set(getTrigPin(sensor), 4095);
-  Tlc.update();
+  digitalWrite(getTrigPin(sensor), HIGH);
   delayMicroseconds(10);
-  Tlc.set(getTrigPin(sensor), 0);
-  Tlc.update();
+  digitalWrite(getTrigPin(sensor), LOW);
 
-  if (getEchoPin(sensor) == 5) { // 5 is on multiplexer
-    duration = Tlc.get(getEchoPin(sensor));
-    Tlc.update();
-  }
-  else {
-    duration = pulseIn(getEchoPin(sensor), HIGH);
-  }
+  duration = pulseIn(getEchoPin(sensor), HIGH);
   int distance= duration*0.034/2;
 
   return distance;
@@ -290,7 +277,7 @@ void loop() {
   /*moveForward();
   while (my_x < dest_x) {
     updateOSVLocation();
-    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(1) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidXObstacle();
       moveForward();
@@ -319,7 +306,7 @@ void loop() {
   moveForward();
   while (abs(my_y-dest_y) > 0.05) {
     updateOSVLocation();
-    if (readDistanceSensor(0) < .175 or readDistanceSensor(2) < .175) {
+    if (readDistanceSensor(1) < .175 or readDistanceSensor(2) < .175) {
       stopAllMotors();
       avoidYObstacle();
       moveForward();
